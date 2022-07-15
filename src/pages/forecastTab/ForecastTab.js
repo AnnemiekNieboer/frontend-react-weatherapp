@@ -1,13 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import './ForecastTab.css';
 import axios from "axios";
-import kelvinToCelsius from "../../helpers/kelvinToCelsius";
 import createDateString from "../../helpers/createDateString";
+import {TempContext} from "../../context/TempProvider";
+
 
 function ForecastTab({coordinates}) {
     const [forecasts, setForecasts] = useState([]);
     const [error, toggleError] = useState(false);
     const [loading, toggleLoading] = useState(false);
+    const {kelvinToMetric} = useContext(TempContext);
 
     useEffect(() => {
         async function fetchData() {
@@ -43,7 +45,7 @@ function ForecastTab({coordinates}) {
 
                         <section className="forecast-weather">
                         <span>
-                        {kelvinToCelsius(day.temp.day)}
+                        {kelvinToMetric(day.temp.day)}
                         </span>
                             <span className="weather-description">
                         {day.weather[0].description}

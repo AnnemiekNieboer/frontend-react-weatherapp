@@ -8,7 +8,7 @@ function TempContextProvider({children}) {
     const [selectedMetric, toggleSelectedMetric] = useState('celcius');
 
     function toggleTemp() {
-        if (selectedMetric === 'celsius') {
+        if (selectedMetric === 'celcius') {
             toggleSelectedMetric('fahrenheit');
         } else {
             toggleSelectedMetric('celcius')
@@ -17,7 +17,7 @@ function TempContextProvider({children}) {
     return (
         <TempContext.Provider value={{
             toggleTemp: toggleTemp,
-            kelvinToMetric: selectedMetric === 'celsius' ? kelvinToCelsius : kelvinToFahrenheit,
+            kelvinToMetric: selectedMetric === 'celcius' ? kelvinToCelsius : kelvinToFahrenheit,
         }}>
             {children}
         </TempContext.Provider>
