@@ -1,12 +1,18 @@
 import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route
+} from 'react-router-dom';
+
 import SearchBar from './components/searchBar/SearchBar';
 import TabBarMenu from './components/tabBarMenu/TabBarMenu';
 import MetricSlider from './components/metricSlider/MetricSlider';
-import './App.css';
-import axios from 'axios';
 import ForecastTab from "./pages/forecastTab/ForecastTab";
-
-const apiKey = "22a778fa6c36dc3f51653cec7fce0a89"
+import TodayTab from "./pages/todayTab/TodayTab";
+import './App.css';
+import kelvinToCelsius from "./helpers/kelvinToCelsius";
 
 function App() {
     const [weatherData, setWeatherData] = useState({});
@@ -16,7 +22,7 @@ function App() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location},&appid=${apiKey}&lang=nl`)
+                const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location},&appid=${process.env.REACT_APP_API_KEY}&lang=nl`)
                 console.log(result.data);
                 setWeatherData(result.data);
             } catch (e) {
@@ -47,7 +53,7 @@ function App() {
                 <>
                     <h2>{weatherData.weather[0].description}</h2>
                     <h3>{weatherData.name} </h3>
-                    <h1>{weatherData.main.temp} &deg;</h1>
+                    <h1>{kelvinToCelsius(weatherData.main.temp)}</h1>
                 </>
             }
 
@@ -55,18 +61,29 @@ function App() {
                 </div>
 
                 {/*CONTENT ------------------ */}
-                <div className="weather-content">
-                    <TabBarMenu/>
+                <Router>
+                    <div className="weather-content">
+                        <TabBarMenu/>
+                        <Switch>
+                            <div className="tab-wrapper">
+                                <Route path="/komende-week">
+                                    <ForecastTab coordinates={weatherData.coord}/>
+                                </Route>
+                                <Route exact path="/">
+                                    <TodayTab coordinates={weatherData.coord}/>
+                                </Route>
+                            </div>
+                        </Switch>
 
-                    <div className="tab-wrapper">
-                        <ForecastTab coordinates={weatherData.coord}/>
                     </div>
-                </div>
+                </Router>
+
 
                 <MetricSlider/>
             </div>
         </>
-    );
+    )
+        ;
 }
 
 export default App;
